@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.get("/", GetAllUsers, (req, res) => {
   if (res.err) {
-    res.send(res.err);
+    return res.status(500).send("There was a problem finding the users.");
   } else {
     res.json([...res.Users]);
   }
@@ -18,7 +18,7 @@ router.get("/", GetAllUsers, (req, res) => {
 
 router.get("/:id", GetUserByID, (req, res) => {
   if (res.err) {
-    res.send(res.err);
+    return res.status(500).send("There was a problem finding the user.");
   } else {
     res.json(res.user);
   }
@@ -26,7 +26,9 @@ router.get("/:id", GetUserByID, (req, res) => {
 
 router.post("/", PostUser, (req, res) => {
   if (res.err) {
-    res.send(res.err);
+    res
+      .status(500)
+      .send("There was a problem adding the information to the database.");
   } else {
     res.json(res.newUser);
   }
@@ -34,7 +36,7 @@ router.post("/", PostUser, (req, res) => {
 
 router.put("/:id", UpdateUserByID, (req, res) => {
   if (res.err) {
-    res.send(res.err);
+    res.status(500).send("There was a problem updating the user.");
   } else {
     res.json(res.updatedUser);
   }
@@ -42,7 +44,7 @@ router.put("/:id", UpdateUserByID, (req, res) => {
 
 router.delete("/:id", DeleteUserByID, (req, res) => {
   if (res.err) {
-    res.send(res.err);
+    res.status(500).send("There was a problem deleting the user.");
   } else {
     res.send("Success");
   }
