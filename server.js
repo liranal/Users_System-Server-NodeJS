@@ -10,7 +10,8 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true })).use(bodyParser.json());
 
 // Routes
-app.use("/Users", require("./routes/UsersRouter"));
+app.use("/api/auth", require("./routes/auth/authRouter"));
+app.use("/api/users", require("./routes/UsersRouter"));
 
 //Default Route
 app.use("/", (req, res) => {
