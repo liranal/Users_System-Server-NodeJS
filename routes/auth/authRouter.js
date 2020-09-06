@@ -4,6 +4,7 @@ var bodyParser = require("body-parser");
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 const config = require("../../config");
+const VerifyToken = require("../../middleware/AuthMiddleware/VerifyToken");
 
 router.use(bodyParser.urlencoded({ extended: false })).use(bodyParser.json());
 var User = require("../../models/UserSchema");
@@ -29,26 +30,6 @@ router.post("/register", (req, res) => {
   );
 });
 
-router.get("/me", (req, res) => {
-  var token = req.headers["x-access-token"];
-  if (!token)
-    res.status(401).send({ auth: false, message: "No token provided." });
-  jwt.verify(token, config.secret, (err, decoded) => {
-    if (err)
-      res
-        .status(500)
-        .send({ auth: false, message: "Failed to authenticate token." });
-
-    User.findById(decoded.id, { password: 0 }, function (err, user) {
-      if (err)
-        return res.status(500).send("There was a problem finding the user.");
-      if (!user) return res.status(404).send("No user found.");
-
-      res.status(200).send(user);
-    });
-  });
-});
-
 router.post("/login", (req, res) => {
   User.findOne({ username: req.body.username }, (err, user) => {
     if (err) return res.status(500).send("Error on the Sever");
@@ -66,4 +47,20 @@ router.post("/login", (req, res) => {
 router.get("/logout", function (req, res) {
   res.status(200).send({ auth: false, token: null });
 });
+
+router.get("/me", VerifyToken, function (req, res, next) {
+  User.findById(req.userId, { password: 0 }, function (err, user) {
+    if (err)
+      return res.status(500).send("There was a problem finding the user.");
+    if (!user) return res.status(404).send("No user found.");
+
+    res.status(200).send(user);
+  });
+});
+
+// add the middleware function
+router.use(function (user, req, res, next) {
+  res.status(200).send(user);
+});
+
 module.exports = router;

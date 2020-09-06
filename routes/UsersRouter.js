@@ -6,9 +6,10 @@ const {
   DeleteUserByID,
 } = require("../middleware/DBMiddleware/DBMiddleware");
 const express = require("express");
+const VerifyToken = require("../middleware/AuthMiddleware/VerifyToken");
 const router = express.Router();
 
-router.get("/", GetAllUsers, (req, res) => {
+router.get("/", [VerifyToken, GetAllUsers], (req, res) => {
   if (res.err) {
     return res.status(500).send("There was a problem finding the users.");
   } else {
@@ -16,7 +17,7 @@ router.get("/", GetAllUsers, (req, res) => {
   }
 });
 
-router.get("/:id", GetUserByID, (req, res) => {
+router.get("/:id", [VerifyToken, GetUserByID], (req, res) => {
   if (res.err) {
     return res.status(500).send("There was a problem finding the user.");
   } else {

@@ -1,6 +1,6 @@
-const UserModel = require("../../models/UserSchema");
+const UserSchema = require("../../models/UserSchema");
 module.exports = (req, res, next) => {
-  UserModel.find({}, (err, users) => {
+  UserSchema.find({}, { password: 0 }, (err, users) => {
     if (err) {
       res.err = err;
     } else {
