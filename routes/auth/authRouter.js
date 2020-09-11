@@ -10,6 +10,7 @@ router.use(bodyParser.urlencoded({ extended: false })).use(bodyParser.json());
 var User = require("../../models/UserSchema");
 
 router.post("/register", (req, res) => {
+  console.log(req.body);
   var hashPassword = bcrypt.hashSync(req.body.password, 8);
   User.create(
     {
@@ -40,7 +41,7 @@ router.post("/login", (req, res) => {
       return res.status(401).send({ auth: false, token: null });
 
     var token = jwt.sign({ id: user._id }, config.secret, { expiresIn: 86400 });
-    res.status(200).send({ auth: true, token: token });
+    res.status(200).send({ auth: true, token: token, userId: user._id });
   });
 });
 
